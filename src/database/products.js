@@ -7,6 +7,8 @@ export const products = [
     Url: "/products/14gvf/",
     Reviews: {
       ReviewsUrl: "/reviewsbyproduct/14gvf/",
+      // Guess for step 9 (/products/<productId>/reviews/)
+      // ReviewsUrl: "/products/14gvf/reviews/",
       ReviewCount: 0,
       AverageRating: 0
     },

@@ -1,6 +1,7 @@
-import {Router } from "express";
+import { Router } from "express";
 import productService from "../services/product.service.mts";
 import EntityNotFoundError from "../errors/EntityNotFoundError.mts";
+// import getProductsById from '../models/product.model.mts';
 const router: Router = Router();
 
 // GET /products/
@@ -21,6 +22,19 @@ router.get("/", async (req, res, next) => {
 }
 });
 
+// GET /products/:id
+router.get("/:id", async (req, res, next) => {
+  const {id} = req.params;
+  if (!id) {
+    return next(new EntityNotFoundError({message : 'Id required',code: 'ERR_VALID', statusCode : 400}))
+    }
+    const product = await productService.getProductById(id);
+    if (!product) {
+      return next(new EntityNotFoundError({message : `Product ${id} Not Found`,code: 'ERR_NF', 
+      statusCode : 404}))
+    }
+    res.status(200).json(product);
+});
 
 
 export default router; // Export the router to use it in the main file
