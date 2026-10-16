@@ -1,8 +1,11 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { products } from "./products.js";
+import * as argon2 from "argon2";
 
 //build the uri for our connection string
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DATABASE}.pigy6qi.mongodb.net/?appName=${process.env.MONGO_DATABASE}`;
+
+const hashedPassword = await argon2.hash("password");
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -24,6 +27,28 @@ const init = async () => {
     
     // initialize the Products collection
     await seedProducts(db);
+    // await seedAlerts(db);
+    await seedUsers(db);
+    // await seedOrders(db);
+
+    await db.collection("alerts").drop();
+    console.log("Collection 'alerts' dropped successfully");
+
+    await db.collection("users").drop();
+    console.log("Collection 'users' dropped successfully");
+
+    await db.collection("orders").drop();
+    console.log("Collection 'orders' dropped successfully");
+
+    await db.createCollection("alerts");
+    console.log("Collection 'alerts' created successfully");
+
+    await db.createCollection("users");
+    console.log("Collection 'users' created successfully");
+
+    await db.createCollection("orders");
+    console.log("Collection 'orders' created successfully");
+
   } catch (error) {
     console.error(error.message);
   } finally {
@@ -69,13 +94,20 @@ const seedProducts = async (db) => {
     // while we are at it...the data provided used a PascalCase naming convention for its keys. Use the provided lowerCaseKeys function to convert all keys to camelCase. This will make it consistent with the rest of our models.
     product = lowerCaseKeys(product);
     return product;
-  });
+  },
 
+  await db.collection("products").createIndex({ id: 1 }),
+  await db.collection("products").createIndex({ category: 1 }),
+  await db.collection("products").createIndex({ brand: 1 }),
+  await db.collection("products").createIndex({ name: 1 })
+);
   
   try {
     // drop the collection to clear out the old records
     await db.collection("products").drop();
     console.log("Collection 'products' dropped successfully");
+
+    
     
     // create a new collection
     await db.createCollection("products");
@@ -87,6 +119,41 @@ const seedProducts = async (db) => {
       `${result.insertedCount} new listing(s) created with the following id(s):`
     );
     console.log(result.insertedIds);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+const seedAlerts = async (db) => {
+    await db.collection("alerts").drop();
+    await db.createCollection("alerts");
+  }
+
+  const seedOrders = async (db) => {
+    await db.collection("orders").drop();
+    await db.createCollection("orders");
+  }
+
+  const seedUsers = async (db) => {
+  //drop and recreate the users collection
+  await db.collection("users").drop();
+  await db.createCollection("users");
+  // add indexes on email and name fields
+  await db.collection("users").createIndex({ email: 1 });
+  await db.collection("users").createIndex({ name: 1 });
+ 
+  // add a new user to the database
+  const user = {
+    email: "test@test.com",
+    password: await argon2.hash("password"),
+    name: "Test User",
+    createdAt: new Date(),
+    modifiedAt: new Date()
+  };
+  try {
+    // insert the user
+    const result = await db.collection("users").insertOne(user);
+    console.log(`New user created with the following id: ${result.insertedId}`);
   } catch (error) {
     console.error(error.message);
   }
