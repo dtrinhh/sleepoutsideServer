@@ -173,3 +173,26 @@ export interface Alert {
   createdAt: Date;
   modifiedAt: Date;
 }
+
+export interface QueryParams {
+  category?: string;
+  q?: string;
+  limit?: string;
+  offset?: string;
+  fields?: string;
+}
+
+type Projection<T> =  {
+  [K in keyof T]?: number;
+}
+
+export interface FindProductObj {
+  search: {
+    name?: string,
+    descriptionHtmlSimple?: string,
+    category?: string,
+  },
+  limit: number,
+  offset: number,
+  fieldFilters?: Projection<Product>
+}

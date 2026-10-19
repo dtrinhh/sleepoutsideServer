@@ -3,7 +3,7 @@ import { products } from "./products.js";
 import * as argon2 from "argon2";
 
 //build the uri for our connection string
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DATABASE}.pigy6qi.mongodb.net/?appName=${process.env.MONGO_DATABASE}`;
+const uri = process.env.MONGO_URI || "";
 
 const hashedPassword = await argon2.hash("password");
 
