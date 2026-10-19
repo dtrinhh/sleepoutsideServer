@@ -3,7 +3,7 @@ export interface Product {
   _id: string;
   id: string;
   isClearance: boolean;
-  category: "tents" | "backpacks" | "sleeping-bags" | "hammocks";
+  category: string;
   isNew: boolean;
   url: string;
   reviews: Review;
@@ -176,23 +176,26 @@ export interface Alert {
 
 export interface QueryParams {
   category?: string;
-  q?: string;
+  q?:string;
   limit?: string;
   offset?: string;
   fields?: string;
 }
 
-type Projection<T> =  {
-  [K in keyof T]?: number;
-}
+// Create a generic Mapped Type
+type Projection<T> = {
+  [K in keyof T]?: number; // '?' means "none or many" are allowed
+};
+
 
 export interface FindProductObj {
   search: {
-    name?: string,
-    descriptionHtmlSimple?: string,
-    category?: string,
+    name?:string,
+    descriptionHtmlSimple?:string,
+    category?:string,
   },
   limit: number,
   offset: number,
-  fieldFilters?: Projection<Product>
+fieldFilters?: Projection<Product>
+
 }

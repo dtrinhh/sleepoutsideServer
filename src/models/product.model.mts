@@ -1,6 +1,6 @@
 import mongodb from "../database/index.mts";
 import type { Product, FindProductObj} from "./types.mts";
-// import { formatFields } from "../services/utils.mts"; Commented out because it's not being utilized
+import { formatFields } from "../services/utils.mts";
 import type { Collection } from "mongodb";
 
 
