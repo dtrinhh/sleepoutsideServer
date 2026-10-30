@@ -1,4 +1,8 @@
-import type { QueryParams } from "../models/types.mts";
+import type { QueryParams, User } from "../models/types.mts";
+import jwt from 'jsonwebtoken';
+
+const jwtSecret = process.env.JWT_SECRET || "secret";
+const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "300s" as any;
 
 export function formatFields(fields: string) {
     const fieldsArr = fields?.split(",");
@@ -60,3 +64,10 @@ export function sanitize(v: Record<string, any>) {
 
     return v;
 };
+
+export async function generateToken(user:User) {
+    const jwtUser = {email: user.email, id:user._id};
+    const token = (jwt.sign(user, jwtSecret, {expiresIn: jwtExpiresIn}));
+
+    return token;
+}
