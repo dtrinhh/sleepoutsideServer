@@ -66,6 +66,7 @@ export function sanitize(v: Record<string, any>) {
 };
 
 export async function generateToken(user:User) {
+    const jwtUser = {email: user.email, id:user._id};
     const token = (jwt.sign(user, jwtSecret, {expiresIn: jwtExpiresIn}));
 
     return token;
