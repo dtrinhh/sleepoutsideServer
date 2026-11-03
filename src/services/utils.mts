@@ -1,5 +1,10 @@
 import type { QueryParams, User } from "../models/types.mts";
 import jwt from 'jsonwebtoken';
+import Ajv from "ajv";
+import addFormats from "ajv-formats";
+import addKeywords from "ajv-keywords";
+import type { JSONSchema7 } from  "json-schema";
+import EntityNotFoundError from "../errors/EntityNotFoundError.mts";
 
 const jwtSecret = process.env.JWT_SECRET || "secret";
 const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "300s" as any;
@@ -67,7 +72,25 @@ export function sanitize(v: Record<string, any>) {
 
 export async function generateToken(user:User) {
     const jwtUser = {email: user.email, id:user._id};
-    const token = (jwt.sign(user, jwtSecret, {expiresIn: jwtExpiresIn}));
+    const token = (jwt.sign(jwtUser, jwtSecret, {expiresIn: jwtExpiresIn}));
 
     return token;
+}
+
+export function validator(schema:JSONSchema7, data:Object) {
+    // Ignore the types for now
+    // @ts-ignore
+    const ajv = new Ajv();
+    // @ts-ignore
+    addFormats(ajv);
+    // @ts-ignore
+    addKeywords(ajv, "instanceof");
+    
+    const validate = ajv.compile(schema);
+    if (!validate(data)) {
+        if (validate.errors) {
+            const message = validate.errors.map((error:any) => error.instancePath + " " + error.message).join(", ");
+            throw new EntityNotFoundError({message:message, statusCode: 400});
+        }
+    }
 }

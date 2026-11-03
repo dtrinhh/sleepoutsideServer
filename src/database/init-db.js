@@ -34,17 +34,11 @@ const init = async () => {
     await db.collection("alerts").drop();
     console.log("Collection 'alerts' dropped successfully");
 
-    await db.collection("users").drop();
-    console.log("Collection 'users' dropped successfully");
-
     await db.collection("orders").drop();
     console.log("Collection 'orders' dropped successfully");
 
     await db.createCollection("alerts");
     console.log("Collection 'alerts' created successfully");
-
-    await db.createCollection("users");
-    console.log("Collection 'users' created successfully");
 
     await db.createCollection("orders");
     console.log("Collection 'orders' created successfully");
@@ -137,7 +131,9 @@ const seedAlerts = async (db) => {
   const seedUsers = async (db) => {
   //drop and recreate the users collection
   await db.collection("users").drop();
+  console.log("Collection 'users' dropped successfully");
   await db.createCollection("users");
+  console.log("Collection 'users' created successfully");
   // add indexes on email and name fields
   await db.collection("users").createIndex({ email: 1 });
   await db.collection("users").createIndex({ name: 1 });
