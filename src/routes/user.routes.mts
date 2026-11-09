@@ -36,9 +36,21 @@ router.post('/', async (req, res, next) =>  {
         const cleanBody = sanitize(req.body);
         const { email, password, name } = cleanBody;
 
-        const newUser = await register(email, password, name);
+        const result = await register(email, password, name);
 
-        res.status(200).json({message:"User created successfully", userId: newUser.insertedId});
+        if (!result.user || !result.token) {
+            return next(new EntityNotFoundError({
+                message: "User was created but could not be logged in",
+                code: "ERR_AUTH",
+                statusCode: 500
+            }));
+        }
+
+        res.status(201).json({
+            message: "User created successfully",
+            user: result.user,
+            token: result.token
+        });
         } catch (error) {
         next(error);
     }

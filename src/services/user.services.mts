@@ -49,5 +49,8 @@ export async function register(email:string, password:string, name:string) {
 
     validator(UserSchema, newUser);
 
-    return createNewUser(newUser);
+    await createNewUser(newUser);
+
+    // Reuse the login flow so a newly registered user receives a session token.
+    return login(email, password);
 }
