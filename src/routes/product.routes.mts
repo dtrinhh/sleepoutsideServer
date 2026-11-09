@@ -1,7 +1,7 @@
 import { Router } from "express";
 import productService from "../services/product.service.mts";
 import EntityNotFoundError from "../errors/EntityNotFoundError.mts";
-import { buildPaginationWrapper, sanitize } from "../services/utils.mts";
+import { sanitize } from "../services/utils.mts";
 // import getProductsById from '../models/product.model.mts';
 const router: Router = Router();
 
@@ -24,6 +24,26 @@ router.get("/", async (req, res, next) => {
 } catch (error) {
   next(error);
 }
+});
+
+// GET /products/search?q=term
+router.get("/search", async (req, res, next) => {
+  try {
+    const cleanQuery = sanitize(req.query);
+    const products = await productService.getProductsBySearch(cleanQuery);
+
+    if (!products) {
+      return next(new EntityNotFoundError({
+        message: "A search query is required",
+        code: "ERR_VALID",
+        statusCode: 400
+      }));
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // GET /products/:id

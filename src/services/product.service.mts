@@ -31,7 +31,34 @@ const getProductById = async (id: string) => {
   return await productModel.getProductsById(id);
 };
 
+const getProductsBySearch = async (query: QueryParams) => {
+  const searchTerm = query.q?.trim();
+  if (!searchTerm) {
+    return null;
+  }
+
+  const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const find: FindProductObj = {
+    search: {
+      $or: [
+        { category: { $regex: escapedSearchTerm, $options: "i" } },
+        { name: { $regex: escapedSearchTerm, $options: "i" } },
+        { descriptionHtmlSimple: { $regex: escapedSearchTerm, $options: "i" } }
+      ]
+    },
+    limit: query.limit ? parseInt(query.limit) : 20,
+    offset: query.offset ? parseInt(query.offset) : 0,
+    fieldFilters: query.fields ? formatFields(query.fields) : undefined
+  };
+
+  const data = await productModel.getAllProducts(find);
+  const wrapper = buildPaginationWrapper(data.totalCount, query);
+  wrapper.results = data.results;
+  return wrapper;
+};
+
 export default {
   getAllProducts,
-  getProductById
+  getProductById,
+  getProductsBySearch
 };
