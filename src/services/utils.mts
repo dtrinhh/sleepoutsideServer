@@ -7,7 +7,7 @@ import type { JSONSchema7 } from  "json-schema";
 import EntityNotFoundError from "../errors/EntityNotFoundError.mts";
 
 const jwtSecret = process.env.JWT_SECRET || "secret";
-const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "300s" as any;
+const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "600s" as any;
 
 export function formatFields(fields: string) {
     const fieldsArr = fields?.split(",");
