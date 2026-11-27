@@ -144,19 +144,22 @@ export interface CartItem {
   productImageSrc: string;
   productUrl: string;
   productCategory: string;
-  productColor: Color;
-  productSize: string;
+  productColor?: {
+    colorCode: string;
+    colorName?: string;
+    colorChipImageSrc?: string;
+    colorPreviewImageSrc?: string;
+  };
+  productSize?: string;
 }
 
 // Order schema
 export interface Order {
-  _id: string;
+  _id?: string;
+  id?: string;
   userId: string;
   name: string,
   status: "pending" | "processing" | "shipped" | "delivered";
-  cardNumber: string;
-    cardExpiration: string;
-    cardCode: number;
   shippingAddress: Address;
   orderItems: CartItem[];
   createdAt: Date;

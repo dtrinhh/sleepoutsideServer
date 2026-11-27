@@ -226,11 +226,10 @@ export const UserSchema: JSONSchema7 = {
         },
         zipCode: {
           type: "string",
-          minLength: 5,
-          maxLength: 10,
-          pattern: "^\\d{5}(-\\d{4})?$",
+          minLength: 3,
+          maxLength: 12,
           description:
-            "The zip code of the user, must not be blank and must be a valid zip code"
+            "The ZIP or postal code of the user"
         },
         country: {
           type: "string",
@@ -281,23 +280,22 @@ export const UserSchema: JSONSchema7 = {
 };
 
 // Order schema
-export const OrderSchema = {
+export const OrderSchema: JSONSchema7 = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "Order",
-  description: "",
+  description: "A demo checkout order. No payment is processed or card data stored.",
   type: "object",
   properties: {
     _id: { type: "string" },
+    id: { type: "string" },
     userId: { type: "string" },
+    name: { type: "string", minLength: 2, maxLength: 50 },
     status: {
       type: "string",
       enum: ["pending", "processing", "shipped", "delivered"],
       description:
         "The status of the order, must be one of: pending, processing, shipped or delivered"
     },
-    cardNumber: { type: "string", minLength: 16, maxLength: 16 },
-    cardExpiration: { type: "string" },
-    cardCode: { type: "number", minLength: 3, maxLength: 3 },
     shippingAddress: {
       type: "object",
       properties: {
@@ -389,10 +387,12 @@ export const OrderSchema = {
           description:
             "The country of the user, must not be blank and must be a valid country"
         }
-      }
+      },
+      required: ["street", "city", "state", "zipCode", "country"]
     },
     orderItems: {
       type: "array",
+      minItems: 1,
       items: {
         type: "object",
         properties: {
@@ -410,7 +410,16 @@ export const OrderSchema = {
             }
           },
           productSize: { type: "string" }
-        }
+        },
+        required: [
+          "productId",
+          "productName",
+          "price",
+          "finalPrice",
+          "productImageSrc",
+          "productUrl",
+          "productCategory"
+        ]
       }
     },
     createdAt: { instanceof: "Date" },
@@ -430,8 +439,8 @@ export const OrderSchema = {
   },
   required: [
     "userId",
+    "name",
     "status",
-    "paymentMethod",
     "shippingAddress",
     "orderItems",
     "createdAt",

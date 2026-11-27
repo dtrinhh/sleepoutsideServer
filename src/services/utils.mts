@@ -5,9 +5,7 @@ import addFormats from "ajv-formats";
 import addKeywords from "ajv-keywords";
 import type { JSONSchema7 } from  "json-schema";
 import EntityNotFoundError from "../errors/EntityNotFoundError.mts";
-
-const jwtSecret = process.env.JWT_SECRET || "secret";
-const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "300s" as any;
+import { jwtExpiresIn, jwtSecret } from "../auth.config.mts";
 
 export function formatFields(fields: string) {
     const fieldsArr = fields?.split(",");
@@ -72,7 +70,7 @@ export function sanitize(v: Record<string, any>) {
 
 export async function generateToken(user:User) {
     const jwtUser = {email: user.email, id:user._id};
-    const token = (jwt.sign(jwtUser, jwtSecret, {expiresIn: jwtExpiresIn}));
+    const token = jwt.sign(jwtUser, jwtSecret, {expiresIn: jwtExpiresIn as any});
 
     return token;
 }

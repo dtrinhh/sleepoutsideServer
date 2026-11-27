@@ -263,6 +263,7 @@
       },
       "Order": {
         "type": "object",
+        "description": "A demo checkout order. No payment is processed or card data stored.",
         "properties": {
           "id": {
             "type": "string"
@@ -280,26 +281,40 @@
           },
           "cardNumber": {
             "type": "string",
-            "description": "A 12 digit credit card number"
+            "writeOnly": true,
+            "description": "A 16-digit demo card number. Validated for checkout, never stored or charged."
           },
           "cardExpiration": {
             "type": "string",
-            "description": "The expiration date of the card in mm/yy format"
+            "writeOnly": true,
+            "description": "Demo card expiration in MM/YY format. Validated but never stored."
           },
           "cardCode": {
             "type": "string",
-            "description": "The three digit security code for the card"
+            "writeOnly": true,
+            "description": "A 3-digit demo security code. Validated but never stored."
           },
           "totalPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Total including items, tax, and shipping; calculated by the server"
+          },
+          "shippingCost": {
+            "type": "number",
+            "description": "Shipping cost; calculated by the server"
+          },
+          "taxAmount": {
+            "type": "number",
+            "description": "Sales tax; calculated by the server"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "readOnly": true
           },
           "modifiedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "readOnly": true
           },
           "shippingAddress": {
             "type": "object",
@@ -375,10 +390,9 @@
               },
               "zipCode": {
                 "type": "string",
-                "minLength": 5,
-                "maxLength": 10,
-                "pattern": "^\\d{5}(-\\d{4})?$",
-                "description": "The zip code of the user, must not be blank and must be a valid zip code"
+                "minLength": 3,
+                "maxLength": 12,
+                "description": "The ZIP or postal code of the user"
               },
               "country": {
                 "type": "string",
@@ -397,13 +411,17 @@
           }
         },
         "required": [
-          "id",
           "userId",
           "name",
           "status",
+          "cardNumber",
+          "cardExpiration",
+          "cardCode",
           "totalPrice",
-          "createdOn",
-          "items"
+          "shippingCost",
+          "taxAmount",
+          "shippingAddress",
+          "orderItems"
         ]
       },
       

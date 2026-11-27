@@ -1,4 +1,5 @@
 import { Router } from "express";
+import orderRoutes from "./order.routes.mts";
 import productRoutes from "./product.routes.mts";
 import swaggerRoutes from "./swagger.routes.mts";
 import userRoutes from "./user.routes.mts";
@@ -12,6 +13,8 @@ router.get("/", (req, res) => {
 
 // load products routes
 router.use("/products", productRoutes);
+
+router.use("/orders", orderRoutes);
 
 router.use("/users", userRoutes);
 
